@@ -35,6 +35,17 @@ const users = {
 
 app.use(express.json());
 
+//POST new user to list of users
+app.post('/users', (req, res) => {
+    const userToAdd = req.body;
+    addUser(userToAdd);
+    res.status(200).end();
+});
+
+function addUser(user){
+    users['users_list'].push(user);
+}
+
 //GET respone to send back list of users
 app.get('/users', (req, res) => {
     const name = req.query.name;
