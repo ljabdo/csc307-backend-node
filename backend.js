@@ -39,14 +39,15 @@ app.use(express.json());
 
 
 //DELETE a user by given ID
-app.delete('/users/:id', (req, res) => {
+app.delete('/users/:id', (req, res) => {    
     const id = req.params['id']; //or req.params.id
+    let uLength = users['users_list'].length;
     let result = deleteUser(id);
 
-    if (result === undefined || result.length == 0)
+    if (result.length === uLength)
         res.status(404).send('Could not delete user');
     else {
-        res.status(200).end();
+        res.status(204).end();
     }
 });
 
@@ -54,13 +55,24 @@ function deleteUser(id){
     return users['users_list'] = users['users_list'].filter( (user) => user['id'] !== id);
 }
 
-
 //POST new user to list of users
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
+    if (userToAdd['id'] === undefined)
+        userToAdd['id'] = randomId();
     addUser(userToAdd);
-    res.status(200).end();
+    res.status(201).send(userToAdd);
 });
+
+function randomId(){
+    const characters ='abcdefghijklmnopqrstuvwxyz';
+    let id = '';
+    for (let i = 0; i < 3; i++){
+        id += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+        return id + Math.floor((Math.random() * 900) + 100)
+            .toString()
+}
 
 function addUser(user){
     users['users_list'].push(user);
